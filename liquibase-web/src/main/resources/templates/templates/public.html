@@ -1,0 +1,141 @@
+﻿<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta http-equiv=Content-Type content=“text/html;charset=utf-8″>
+    <meta http-equiv=X-UA-Compatible content=IE=EmulateIE7>
+    <meta http-equiv=X-UA-Compatible content=IE=EmulateIE8>
+    <meta http-equiv=X-UA-Compatible content=IE=EmulateIE9>
+    <title>工资管理系统</title>
+    <link rel="stylesheet" href="../static/css/public.css"/>
+    <link rel="stylesheet" href="../static/css/style.css"/>
+    <link href="../static/css/loading.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+<!--头部-->
+<header class="publicHeader">
+    <h1>工资管理系统</h1>
+
+    <div class="publicHeaderR">
+        <p><span>下午好！</span><span id="loginUserName" style="color: #fff21b"> </span> , 欢迎你！</p>
+        <a onclick="signOut()">退出</a>
+    </div>
+</header>
+<!--时间-->
+<section class="publicTime">
+    <span id="time">2015年1月1日 11:11  星期一</span>
+    <a href="#">温馨提示：为了能正常浏览，请使用高版本浏览器！（IE10+）</a>
+</section>
+<!--主体内容-->
+<section class="publicMian">
+    <div class="left">
+        <h2 class="leftH2"><span class="span1"></span>功能列表 <span></span></h2>
+        <nav>
+            <ul id="menuUl" style="display: none" class="list">
+                <li><a onclick="menuClick('salarymanager/list.html',this)">工资管理</a></li>
+                <li id="empSalaryQuery"><a onclick="menuClick('salaryuser/list.html',this)">工资查询</a></li>
+                <li><a onclick="menuClick('employee/billList.html',this)">员工管理</a></li>
+                <li id="modifyPass"><a onclick="modifyPass()">修改密码</a></li>
+            </ul>
+        </nav>
+    </div>
+    <div class="right">
+        <iframe style="height: 100%;width: 100%" name="iframe" id="iframe" align="center" width="100%" height="170" src="welcome.html" frameborder="no" border="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+    </div>
+</section>
+<footer class="footer">
+    <hr/>
+    Copyright &copy; &nbsp;&nbsp;2008--&nbsp;
+    <a href="#">金豆豆创意工作室</a> ALL RIGHT RESERVED<br/>
+    联系方式：zyf_aln@sina.com<br/>
+    author:<a href="#">Yvan/Boom/</a>
+</footer>
+<script type="text/javascript" src="../static/js/jquery.js"></script>
+<script src="../static/js/time.js"></script>
+<script src="../static/js/parent.js"></script>
+<script src="../static/js/ajaxFileUpload.js"></script>
+<script>
+    function menuClick(id,obj) {
+        $("#iframe").attr("src",id);
+        $(obj).parent().siblings().removeClass("selected");
+        $(obj).parent().addClass("selected");
+    }
+
+    function modifyPass() {
+        modelShow("modifyPass", "password.html", "修改密码", 250, 270);
+    }
+
+    function signOut(){
+        confirmShow("确认退出吗？", function () {
+            $.get("../../user/signOut", {},function(data){
+                $('#loading').hide();
+                if(data.code == "0000"){
+                    location.href = "login.html";
+                }
+            },'json');
+        });
+    }
+
+    $(function(){
+        if(window.top != null&&window.top.document.URL != document.URL){
+            window.top.location = document.URL;
+        }
+        $('#loading').show();
+        $.get("../../user/getLoginUser", {},function(data){
+            $('#loading').hide();
+            if(data.code == "0000"){
+                if(data.data.employee){
+                    $("#loginUserName").text(data.data.employee.empName);
+                }else {
+                    $("#loginUserName").text(data.data.empId);
+                }
+
+                if(data.data.userType == 0){
+                    $("#empSalaryQuery").remove();
+                }else {
+                    $("#empSalaryQuery").siblings().not("[id='modifyPass']").remove();
+                }
+                $("#menuUl").show();
+            }else  if(data.code == "1003"){
+                location.href = "login.html";
+            }
+        },'json');
+    });
+</script>
+<div id="loading">
+    <img src="../static/img/loading.gif">
+</div>
+
+<!--点击删除按钮后弹出的页面-->
+<div class="zhezhao"></div>
+<div class="remove" id="removeBi">
+    <div class="removerChid">
+        <h2>提示</h2>
+        <div class="removeMain">
+            <p id="confirmTishi"></p>
+            <a href="#" id="confirmyes">确定</a>
+            <a href="#" id="confirmno">取消</a>
+        </div>
+    </div>
+</div>
+
+<div class="remove" id="alertBi">
+    <div class="removerChid">
+        <h2 id="alertTitle">提示</h2>
+        <div class="removeMain">
+            <p id="alertTishi"></p>
+            <a href="#" onclick="alertHide()">确定</a>
+        </div>
+    </div>
+</div>
+
+<div class="remove" id="modelBi">
+    <div class="removerChid">
+        <h2 id="modelTitle">提示</h2>
+        <div class="removeMain" id="modelMain" style="margin-top: 0px">
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

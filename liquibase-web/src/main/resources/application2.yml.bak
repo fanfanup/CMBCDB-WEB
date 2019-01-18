@@ -1,0 +1,67 @@
+server:
+  port: 8089
+  context-path: /liquibase-web
+spring:
+    datasource:
+        name: primary
+        url: jdbc:mysql://127.0.0.1:3306/liqui?useSSL=false&useUnicode=true&characterEncoding=utf-8
+        username: root
+        password: 123456
+        driver-class-name: com.mysql.jdbc.Driver
+        filters: stat
+        maxActive: 20
+        initialSize: 1
+        maxWait: 60000
+        minIdle: 1
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        validationQuery: select 'x'
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        poolPreparedStatements: true
+        maxOpenPreparedStatements: 20
+    thymeleaf:
+        prefix: classpath:/templates/
+    devtools:
+      restart:
+         enabled: true #热部署生效
+         #设置重启的目录
+         additional-paths: src/main/java
+         exclude: WEB-INF/** #classpath目录下的WEB-INF文件夹内容修改不重启
+      livereload:
+          enabled: true
+    liquibase:
+      enabled: false
+    http:
+      multipart:
+        maxFileSize:100Mb
+        maxRequestSize:100Mb  
+        
+        
+          
+mapper:
+    mappers: com.cmbc.liquibase.Utils.BaseMapper
+    not-empty: false
+    identity: MYSQL
+
+
+
+liquibase:
+  change-log: classpath:liquibase/changelog1.xml
+  user: root
+  password: 123456
+  url: jdbc:mysql://localhost:332206/fpctest1?useSSL=false&useUnicode=true&characterEncoding=utf-8
+  enabled: true
+  drop-first: false
+
+
+
+pagehelper:
+    helperDialect: MYSQL
+    reasonable: true
+    supportMethodsArguments: true
+    params: count=countSql
+logging:
+  level:
+     com.cmbc.liquibase.mapper : debug

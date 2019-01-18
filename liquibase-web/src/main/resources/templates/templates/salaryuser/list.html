@@ -1,0 +1,57 @@
+﻿<link rel="stylesheet" href="../../static/css/public.css"/>
+<link rel="stylesheet" href="../../static/css/style.css"/>
+<link rel="stylesheet" href="../../static/css/salaryUser.css"/>
+
+
+<section class="publicMian">
+    <div style="width: 100%">
+        <div class="location">
+            <strong>你现在所在的位置是:</strong>
+            <span>员工工资查询</span>
+        </div>
+        <div class="search">
+            <span>请选择年份：</span>
+            <select id="year" name="year">
+                <option value="">--请选择--</option>
+            </select>
+
+            <span>请选择月份：</span>
+            <select id="month" name="month">
+                <option value="">--请选择--</option>
+            </select>
+
+            <input type="button" onclick="search()" value="查询"/>
+        </div>
+        <!--账单表格 样式和员工信息-->
+        <div class="providerAdd" style="margin: 0px; margin-top: 15px; overflow-x: hidden; width:96%; height:440px;">
+            <table id='usertable' class="providerTable" cellpadding="0" cellspacing="0">
+                <!--<tr class="firstTrs">-->
+                <!--<th width="10%" colspan="5">****年**月医疗公司职工工资明细表</th>-->
+                <!--</tr>-->
+                <!--<tr>-->
+                <!--<th width="20%">姓名</th>-->
+                <!--<th width="20%" colspan="2">张三</th>-->
+                <!--<th width="20%">职工编号</th>-->
+                <!--<th width="20%">HT789378939</th>-->
+                <!--</tr>-->
+            </table>
+            <div class="providerAddBtn" style="margin-left:40%; width: 100%;">
+                <input type="button" value="下载打印" style="display: none" onclick="Print('.providerTable')"/>
+
+                <input type="button" value="下一步" style="display: none" id="next" salayId=""/>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!--点击删除按钮后弹出的页面-->
+<div class="zhezhao"></div>
+<script src="../../static/js/jquery.js"></script>
+<script src="../../static/js/js.js"></script>
+<script src="../../static/js/time.js"></script>
+<script src="../../static/js/staffsalary.js"></script>
+<script src="../../static/js/child.js"></script>
+<script src="../../static/js/Print.js"></script>
+<!--<script src="../../static/js/alert.js"></script>-->
+
+

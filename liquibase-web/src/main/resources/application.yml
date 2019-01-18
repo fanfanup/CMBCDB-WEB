@@ -1,0 +1,32 @@
+server:
+  port: 8089
+  context-path: /liquibase-web
+spring:
+    datasource:
+        name: localdatabase
+        url: jdbc:mysql://127.0.0.1:3306/liqui?useSSL=false&useUnicode=true&characterEncoding=utf-8
+        username: root
+        password: 123456
+        driver-class-name: com.mysql.jdbc.Driver
+       
+mapper:
+    mappers: com.cmbc.liquibase.Utils.BaseMapper
+    not-empty: false
+    identity: MYSQL
+
+liquibase:
+    change-log: classpath:liquibase/changelog3.xml
+    user: root
+    password: 123456
+    url: jdbc:mysql://localhost:3306/liqui1?useSSL=false&useUnicode=true&characterEncoding=utf-8
+    enabled: true
+    drop-first: false 
+
+pagehelper:
+    helperDialect: MYSQL
+    reasonable: true
+    supportMethodsArguments: true
+    params: count=countSql
+logging:
+  level:
+     com.cmbc.liquibase.mapper : debug

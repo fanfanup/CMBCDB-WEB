@@ -1,0 +1,161 @@
+<link rel="stylesheet" href="../../static/css/public.css"/>
+<link rel="stylesheet" href="../../static/css/style.css"/>
+
+<section class="publicMian">
+    <div style="width: 100%">
+        <div class="location">
+            <strong>你现在所在的位置是:</strong>
+            <span>员工工资详情</span>
+        </div>
+        <!--账单表格 样式和员工信息-->
+        <div class="providerAdd" style="margin: 0px; margin-top: 15px; overflow-x: hidden; width:96%; height:490px;">
+            <table id='usertable' class="providerTable" cellpadding="0" cellspacing="0" style="">
+                <!--<tr class="firstTrs">-->
+                <!--<th width="10%" colspan="5">****年**月医疗公司职工工资明细表</th>-->
+                <!--</tr>-->
+                <!--<tr>-->
+                <!--<th width="20%">姓名</th>-->
+                <!--<th width="20%" colspan="2">张三</th>-->
+                <!--<th width="20%">职工编号</th>-->
+                <!--<th width="20%">HT789378939</th>-->
+                <!--</tr>-->
+            </table>
+            <div class="providerAddBtn" style="margin-left:40%; width: 100%;">
+                <input type="button" value="下一步" style="display: none" id="next"/>
+                <input type="button" value="下载打印" style="display: none" id="print" onclick="Print('.providerTable')"/>
+                <input type="button" value="返回" onclick="history.back(-1)"/>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!--点击删除按钮后弹出的页面-->
+<div class="zhezhao"></div>
+<script src="../../static/js/jquery.js"></script>
+<script src="../../static/js/js.js"></script>
+<script src="../../static/js/time.js"></script>
+<script>
+    $(function () {
+        var url = window.location.href;
+        var salaryId = url.substring(url.lastIndexOf("/")+1);
+        if(salaryId != "" && salaryId != "undefined"){
+            addTable(salaryId)
+        }else {
+            loadingHide();
+            alertShow("系统出错！");
+            history.back(-1);
+        }
+
+        $("#next").click(function(){
+            window.location.href = "../../salary/intoPrint/" + salaryId;
+        });
+    });
+
+    function addTable(slaryId) {
+        loadingShow();
+        $.post("../../staff/findSalary", {'salaryId': slaryId}, function (data) {
+            var reVal = data.data;
+            // if (reVal.emp_type = 0) {
+            if (reVal.emp_type == 0){
+                $("#print").hide();
+                $("#next").show();
+            }else {
+                $("#next").hide();
+                $("#print").show();
+            }
+            Generatdata(reVal);
+            // } else {
+            //     GeneratHTdata(reVal,salaryDate);
+            // }
+            loadingHide();
+        }, 'json');
+    }
+
+
+    function Generatdata(result) {
+        var html = '';
+        if (result.emp_type == 0) {
+            var htmlHead = '<tr class="firstTr">' +
+                '<th width="10%" colspan="5" style="size:40px; height:60px;"><img src="../../static/img/logo.jpeg" width="50px" height="50px" align="center" style="padding-left: 20px;">&nbsp;&nbsp;&nbsp;' + result.salaryInfo.salaryDate + ' 山西医科大学第六医院职工工资明细表</th>' +
+                '</tr>';
+        }else{
+            var htmlHead = '<tr class="firstTr">' +
+                '<th width="10%" colspan="5" style="size:40px; height:60px;"><img src="../../static/img/logo.jpeg" width="50px" height="50px" align="center" style="padding-left: 20px;">&nbsp;&nbsp;&nbsp;' + result.salaryInfo.salaryDate + ' 山西医科大学第六医院合同制职工工资明细表</th>' +
+                '</tr>';
+        }
+        html += '<tr>' +
+            '<th width="20%">姓名</th>' +
+            '<th width="20%" colspan="2">' + result.salaryInfo.employee.empName + '</th>' +
+            '<th width="20%">职工编号</th>' +
+            '<th width="20%">' + result.salaryInfo.employee.empId + '</th>' +
+            '</tr><tr>' +
+            '<th width="20%">身份证号</th>' +
+            '<th width="20%" colspan="4">' + (result.salaryInfo.employee.empCardNum == null?'':result.salaryInfo.employee.empCardNum) + '</th></tr>';
+        for (var k = 0, length = result.salaryInfo.salaryTypeEmpList.length; k < length; k++) {
+            html +=
+                '<tr>' +
+                '<th width="20%">' + result.salaryInfo.salaryTypeEmpList[k].salaryTypeObj.salaryName + '</th>' +
+                '<th width="20%" colspan="2">' + result.salaryInfo.salaryTypeEmpList[k].money / 10000 + '</th>';
+            if (k + 1 < length) {
+                html +=
+                    '<th width="20%">' + result.salaryInfo.salaryTypeEmpList[k + 1].salaryTypeObj.salaryName + '</th>' +
+                    '<th width="20%">' + result.salaryInfo.salaryTypeEmpList[k + 1].money / 10000 + '</th>';
+            }
+            html += '</tr>';
+            k++;
+        }
+        if (result.emp_type == 0) {
+            html += '<tr><th width="20%">应领工资</th>' +
+                '<th width="20%"  colspan="2">' + result.salaryInfo.grossPay / 10000 + '</th>' +
+                '<th width="20%">实领工资</th>' +
+                '<th width="20%">' + result.salaryInfo.netPayroll / 10000 + '</th>'+
+                '</tr><tr><th></th></tr><tr>' +
+                '<th width="20%" style="height: 30px;">其他奖明细</th>' +
+                '<th width="20%" colspan="4"></th>' +
+                '</tr>' + '<tr>';
+        }else{
+            html += '<tr><th width="20%">应领工资</th>' +
+                '<th width="20%" colspan="4">' + result.salaryInfo.grossPay / 10000 + '</th>' +
+                '</tr><tr><th></th></tr><tr>' +
+                '<th width="20%" style="height: 30px;">其他奖明细</th>' +
+                '<th width="20%" colspan="4"></th>' +
+                '</tr>' + '<tr>';
+        }
+        if(result.bonusInfo.length == 0){
+            html +='<th width="20%" colspan="5">本月无其他奖明细</th></tr>'
+        }else {
+            html += '<th width="20%">序号</th>' +
+                '<th width="20%">金额</th>' +
+                '<th width="20%" colspan="2">内容</th>' +
+                '<th width="20%">归口管理部门</th>' +
+                '</tr>';
+            for (var i = 0; i < result.bonusInfo.length; i++) {
+                a = i+1;
+                html += '<tr><th width="20%">' + a + '</th>' +
+                    '<th width="20%">' + result.bonusInfo[i].money + '</th>' +
+                    '<th width="20%" colspan="2">' + result.bonusInfo[i].cont + '</th>' +
+                    '<th width="20%">' + result.bonusInfo[i].manageDepart + '</th>' +
+                    '</tr>';
+            }
+        }
+
+        if (result.emp_type == 0) {
+            html += '<tr><th></th></tr><tr style="height: 40px;"><th width="20%">组成规则</th>' +
+                '<th width="20%" colspan="4">' +
+                '应领工资=应领A卡+B卡\n</br>' +
+                '实领工资=应领工资-个税-养老-医疗-失业-公积金-扣款</br>' +
+                '其他奖包括预算奖，具体见科室薪酬发放构成表</th></br>' +
+                '</tr>';
+            $("#usertable").html(htmlHead + html);
+        } else {
+            html += '<tr><th></th></tr><tr style="height: 40px;"><th width="20%">组成规则</th>' +
+                '<th width="20%" colspan="4">' +
+                '其他奖包括预算奖，具体见科室薪酬发放构成表</th></br>' +
+                '</tr>';
+            $("#usertable").html(htmlHead + html);
+        }
+    }
+</script>
+<script src="../../static/js/child.js"></script>
+<script src="../../static/js/Print.js"></script>
+<!--<script src="../../static/js/alert.js"></script>-->

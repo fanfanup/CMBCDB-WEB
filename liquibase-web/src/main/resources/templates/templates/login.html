@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta http-equiv=Content-Type content=“text/html;charset=utf-8″>
+    <meta http-equiv=X-UA-Compatible content=IE=EmulateIE7>
+    <meta http-equiv=X-UA-Compatible content=IE=EmulateIE8>
+    <meta http-equiv=X-UA-Compatible content=IE=EmulateIE9>
+    <title>系统登录 - 工资管理系统</title>
+    <link rel="stylesheet" href="../static/css/style.css"/>
+    <script type="text/javascript" src="../static/js/jquery.js"></script>
+    <link href="../static/css/loading.css" rel="stylesheet" type="text/css" />
+</head>
+<body class="login_bg">
+
+    <section class="loginBox">
+        <header class="loginHeader">
+            <h1>山西医科大学第六医院</h1>
+        </header>
+        <section class="loginCont">
+            <form id="loginFrom" class="loginForm" method="post" onsubmit="return false">
+                <div class="inputbox">
+                    <label for="id">用户名：</label>
+                    <input id="id" type="text" name="id" placeholder="请输入用户名" required/>
+                </div>
+                <div class="inputbox">
+                    <label for="pwd">密码：</label>
+                    <input id="pwd" type="password" name="pwd" placeholder="请输入密码" required/>
+                </div>
+                <div class="subBtn">
+                    <input type="submit"  value="登录" />
+                    <input type="reset" value="重置"/>
+                </div>
+
+            </form>
+        </section>
+    </section>
+    <script>
+        $("#loginFrom").submit(function(){
+            var userName = $('#id').val();
+            var pwd = $('#pwd').val();
+            $('#loading').show();
+            $.post("../../user/login", {'id':userName,'pwd':pwd},function(data){
+                $('#loading').hide();
+                if(data.code == "0000"){
+                    location.href = "public.html";
+                }else {
+                    $('#pwd').val("");
+                    alert("密码或用户错误!");
+                }
+            },'json');
+        });
+        document.onkeydown=keyDownSearch;
+        function keyDownSearch(e) {
+            var theEvent = e || window.event;
+            var code = theEvent.keyCode || theEvent.which || theEvent.charCode;
+            if (code == 13) {
+                $("#loginFrom").submit();
+                return false;
+            }
+            return true;
+        }
+        $(function () {
+            if(window.top != null && window.top.document.URL != document.URL){
+                window.top.location = document.URL;
+            }
+        })
+    </script>
+
+    <div id="loading">
+        <img src="../static/img/loading.gif">
+    </div>
+</body>
+</html>
